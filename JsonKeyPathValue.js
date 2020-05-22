@@ -1,11 +1,29 @@
 class JsonKeyPathValue {
 	evaluate() {
-		const json = tryParseJson(this.json);
+		const obj = tryParseJson(this.json);
+		const kp = this.keyPath;
 
-		if (!json || !this.keyPath)
-			return json;
+		if (!obj)
+			return null;
 
-		return this.key.split('.').reduce((a, c) => a[c], json);
+		if (!kp)
+			return JSON.stringify(obj);
+
+		const result = kp.split('.').reduce((a, c) => a[c], obj);
+
+		if (result == null)
+			return null;
+
+		switch (typeof result) {
+			case 'string':
+				return result;
+
+			case 'object':
+				return JSON.stringify(result);
+
+			default:
+				return String(result);
+		}
 	}
 }
 
